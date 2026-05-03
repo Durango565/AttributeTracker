@@ -1,0 +1,8 @@
+id,profileId,key,title,type,xpReward,status,date,completedAt,createdAt
+quest_moqf0jxr_y4r1wa,profile_demo,daily-checkin,Complete a daily check-in,daily,60,open,2026-05-03,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_kac79j,profile_demo,sleep-7,Log 7+ hours of sleep,daily,35,open,2026-05-03,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_w0uvv6,profile_demo,learn-30,Study or learn for 30 minutes,daily,40,open,2026-05-03,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_8n4q1t,profile_demo,fitness-activity,Complete a fitness activity,daily,40,open,2026-05-03,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_iu4mie,profile_demo,no-spend,No-spend day,daily,30,open,2026-05-03,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_qa5lto,profile_demo,three-checkins,Complete 3 check-ins this week,weekly,120,open,2026-W18,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_lskwkn,profile_demo,balanced-build,Raise three attributes to 70+,weekly,150,open,2026-W18,,2026-05-03T23:42:06.831Z

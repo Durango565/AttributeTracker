@@ -1,0 +1,7 @@
+id,profileId,date,updates,notes,xpGained,createdAt
+checkin_demo_1,profile_demo,2026-04-25,"{""attributes"":{""Fitness"":70,""Focus"":76,""Sleep"":68},""skills"":{},""signals"":{}}",Reset the plan and walked after work.,70,2026-05-03T23:42:06.762Z
+checkin_demo_2,profile_demo,2026-04-27,"{""attributes"":{""Focus"":78,""Finance"":66,""Learning"":80},""skills"":{},""signals"":{}}",Long study block and clean budget review.,85,2026-05-03T23:42:06.762Z
+checkin_demo_3,profile_demo,2026-04-28,"{""attributes"":{""Fitness"":72,""Discipline"":74},""skills"":{},""signals"":{}}","Gym session, lighter screen time.",60,2026-05-03T23:42:06.762Z
+checkin_demo_4,profile_demo,2026-04-30,"{""attributes"":{""Focus"":80,""Creativity"":75,""Learning"":82},""skills"":{},""signals"":{}}",Deep work sprint with sketching practice.,95,2026-05-03T23:42:06.762Z
+checkin_demo_5,profile_demo,2026-05-01,"{""attributes"":{""Finance"":69,""Sleep"":71},""skills"":{},""signals"":{}}",Good sleep and no-spend day.,75,2026-05-03T23:42:06.762Z
+checkin_demo_6,profile_demo,2026-05-02,"{""attributes"":{""Fitness"":74,""Discipline"":78,""Learning"":84},""skills"":{},""signals"":{}}","Workout, reading, and inbox cleanup.",90,2026-05-03T23:42:06.762Z

@@ -1,0 +1,4 @@
+id,profileId,name,rating,cap,createdAt,updatedAt
+skill_demo_1,profile_demo,Meal Prep,67,99,2026-05-03T23:42:06.762Z,2026-05-03T23:42:06.762Z
+skill_demo_2,profile_demo,Shooting Form,73,99,2026-05-03T23:42:06.762Z,2026-05-03T23:42:06.762Z
+skill_demo_3,profile_demo,Public Speaking,61,99,2026-05-03T23:42:06.762Z,2026-05-03T23:42:06.762Z

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AttributeTracker2K</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">2K</span>
+          <div>
+            <p class="eyebrow">AttributeTracker2K</p>
+            <h1>MyPLAYER Life Build</h1>
+          </div>
+        </div>
+        <section class="profile-panel" aria-label="Profile selector">
+          <label for="profileSelect">Profile</label>
+          <div class="profile-row">
+            <select id="profileSelect"></select>
+            <form id="profileForm" class="inline-form">
+              <input id="profileName" type="text" placeholder="Create profile" autocomplete="off">
+              <button type="submit">Add</button>
+            </form>
+          </div>
+        </section>
+      </header>
+
+      <main>
+        <section class="hero-grid">
+          <article class="player-card panel">
+            <div class="plate">Season Demo</div>
+            <div class="overall">
+              <span id="overallRating">--</span>
+              <small>OVR</small>
+            </div>
+            <div>
+              <p class="eyebrow">Archetype</p>
+              <h2 id="archetypeName">Loading</h2>
+              <p id="archetypeDescription" class="muted">Calculating build identity.</p>
+            </div>
+            <div id="capList" class="cap-list"></div>
+          </article>
+
+          <article class="progress-panel panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Progression</p>
+                <h2 id="levelLabel">Level --</h2>
+              </div>
+              <strong id="totalXp">0 XP</strong>
+            </div>
+            <div class="xp-track">
+              <div id="xpFill"></div>
+            </div>
+            <div class="stat-row">
+              <span id="xpNext">-- XP to next level</span>
+              <span id="xpFormula">XP formula</span>
+            </div>
+            <div class="streak-grid">
+              <div>
+                <strong id="currentStreak">0</strong>
+                <span>Current streak</span>
+              </div>
+              <div>
+                <strong id="bestStreak">0</strong>
+                <span>Best streak</span>
+              </div>
+              <div>
+                <strong id="weeklyXp">0</strong>
+                <span>Weekly XP</span>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel wide">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Core Attributes</p>
+                <h2>Rating Meters</h2>
+              </div>
+              <span class="pill">1-99 scale</span>
+            </div>
+            <div id="attributeGrid" class="attribute-grid"></div>
+          </article>
+
+          <article class="panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Skills</p>
+                <h2>Custom Tracker</h2>
+              </div>
+            </div>
+            <form id="skillForm" class="stack-form">
+              <input id="skillName" type="text" placeholder="Add a skill" autocomplete="off">
+              <input id="skillRating" type="number" min="1" max="99" value="50">
+              <button type="submit">Add Skill</button>
+            </form>
+            <div id="skillList" class="skill-list"></div>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel wide">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Daily Check-In</p>
+                <h2>Update Your Build</h2>
+              </div>
+              <span id="duplicateHint" class="pill quiet">One check-in per day</span>
+            </div>
+            <form id="checkinForm">
+              <div class="form-grid">
+                <label>Date <input id="checkinDate" type="date"></label>
+                <label>XP gained <input id="xpGained" type="number" min="0" max="500" value="50"></label>
+                <label>Sleep hours <input id="sleepHours" type="number" min="0" max="16" step="0.25" value="7"></label>
+                <label>Learning minutes <input id="learningMinutes" type="number" min="0" max="600" value="30"></label>
+              </div>
+              <div id="checkinAttributes" class="slider-grid"></div>
+              <div id="checkinSkills" class="slider-grid"></div>
+              <div class="toggle-grid">
+                <label><input id="fitnessActivity" type="checkbox"> Fitness activity</label>
+                <label><input id="noSpend" type="checkbox"> No-spend day</label>
+              </div>
+              <label>Notes <textarea id="notes" rows="3" placeholder="What moved the build today?"></textarea></label>
+              <button class="primary" type="submit">Submit Check-In</button>
+            </form>
+          </article>
+
+          <article class="panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Badges</p>
+                <h2>Unlocks</h2>
+              </div>
+            </div>
+            <div id="badgeGrid" class="badge-grid"></div>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Quests</p>
+                <h2>Challenges</h2>
+              </div>
+            </div>
+            <div id="questList" class="quest-list"></div>
+          </article>
+
+          <article class="panel wide">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Trends</p>
+                <h2>Recent Activity</h2>
+              </div>
+              <span id="weeklySummary" class="pill">0 active days</span>
+            </div>
+            <div id="trendBars" class="trend-bars"></div>
+            <div id="activityList" class="activity-list"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+id,profileId,name,rating,cap,isCore,updatedAt
+attr_demo_1,profile_demo,Fitness,74,99,true,2026-05-03T23:42:06.762Z
+attr_demo_2,profile_demo,Focus,82,99,true,2026-05-03T23:42:06.762Z
+attr_demo_3,profile_demo,Discipline,78,99,true,2026-05-03T23:42:06.762Z
+attr_demo_4,profile_demo,Creativity,76,99,true,2026-05-03T23:42:06.762Z
+attr_demo_5,profile_demo,Social,64,99,true,2026-05-03T23:42:06.762Z
+attr_demo_6,profile_demo,Finance,69,99,true,2026-05-03T23:42:06.762Z
+attr_demo_7,profile_demo,Sleep,71,99,true,2026-05-03T23:42:06.762Z
+attr_demo_8,profile_demo,Learning,84,99,true,2026-05-03T23:42:06.762Z

@@ -1,0 +1,21 @@
+{
+  "name": "attributetracker2k",
+  "version": "1.0.0",
+  "description": "A web-first NBA 2K-inspired personal attribute tracking app with local CSV persistence.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "attributes",
+    "nba-2k",
+    "progression",
+    "express",
+    "csv"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
