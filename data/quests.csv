@@ -1,8 +1,17 @@
-id,profileId,key,title,type,xpReward,status,date,completedAt,createdAt
-quest_moqf0jxr_y4r1wa,profile_demo,daily-checkin,Complete a daily check-in,daily,60,open,2026-05-03,,2026-05-03T23:42:06.831Z
-quest_moqf0jxr_kac79j,profile_demo,sleep-7,Log 7+ hours of sleep,daily,35,open,2026-05-03,,2026-05-03T23:42:06.831Z
-quest_moqf0jxr_w0uvv6,profile_demo,learn-30,Study or learn for 30 minutes,daily,40,open,2026-05-03,,2026-05-03T23:42:06.831Z
-quest_moqf0jxr_8n4q1t,profile_demo,fitness-activity,Complete a fitness activity,daily,40,open,2026-05-03,,2026-05-03T23:42:06.831Z
-quest_moqf0jxr_iu4mie,profile_demo,no-spend,No-spend day,daily,30,open,2026-05-03,,2026-05-03T23:42:06.831Z
-quest_moqf0jxr_qa5lto,profile_demo,three-checkins,Complete 3 check-ins this week,weekly,120,open,2026-W18,,2026-05-03T23:42:06.831Z
-quest_moqf0jxr_lskwkn,profile_demo,balanced-build,Raise three attributes to 70+,weekly,150,open,2026-W18,,2026-05-03T23:42:06.831Z
+id,profileId,key,title,type,xpReward,status,date,dueDate,targetCount,progressCount,linkedAttribute,source,completedAt,createdAt
+quest_moqf0jxr_y4r1wa,profile_demo,daily-checkin,Complete a daily check-in,daily,60,open,2026-05-03,,,,,,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_kac79j,profile_demo,sleep-7,Log 7+ hours of sleep,daily,35,open,2026-05-03,,,,,,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_w0uvv6,profile_demo,learn-30,Study or learn for 30 minutes,daily,40,open,2026-05-03,,,,,,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_8n4q1t,profile_demo,fitness-activity,Complete a fitness activity,daily,40,open,2026-05-03,,,,,,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_iu4mie,profile_demo,no-spend,No-spend day,daily,30,open,2026-05-03,,,,,,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_qa5lto,profile_demo,three-checkins,Complete 3 check-ins this week,weekly,120,open,2026-W18,,,,,,,2026-05-03T23:42:06.831Z
+quest_moqf0jxr_lskwkn,profile_demo,balanced-build,Raise three attributes to 70+,weekly,150,open,2026-W18,,,,,,,2026-05-03T23:42:06.831Z
+quest_moqh2ew6_6ge8qa,profile_moqh2es4_4p0uao,daily-checkin,Complete a daily check-in,daily,25,complete,2026-05-04,2026-05-04,1,1,,system,2026-05-04T00:39:55.246Z,2026-05-04T00:39:32.838Z
+quest_moqh2ew7_vdnp1a,profile_moqh2es4_4p0uao,sleep-7,Log 7+ hours of sleep,daily,40,complete,2026-05-04,2026-05-04,1,1,Sleep,system,2026-05-04T00:39:55.247Z,2026-05-04T00:39:32.839Z
+quest_moqh2ew7_mo1m3n,profile_moqh2es4_4p0uao,learn-30,Study or learn for 30 minutes,daily,40,complete,2026-05-04,2026-05-04,1,1,Learning,system,2026-05-04T00:39:55.337Z,2026-05-04T00:39:32.839Z
+quest_moqh2ew7_opwq63,profile_moqh2es4_4p0uao,fitness-activity,Complete a fitness activity,daily,40,complete,2026-05-04,2026-05-04,1,1,Fitness,system,2026-05-04T00:39:55.349Z,2026-05-04T00:39:32.839Z
+quest_moqh2ew7_tpvw20,profile_moqh2es4_4p0uao,no-spend,No-spend day,daily,40,complete,2026-05-04,2026-05-04,1,1,Finance,system,2026-05-04T00:39:55.351Z,2026-05-04T00:39:32.839Z
+quest_moqh2ew7_212jhy,profile_moqh2es4_4p0uao,three-checkins,Complete 3 check-ins this week,weekly,100,open,2026-W19,,3,0,Discipline,system,,2026-05-04T00:39:32.839Z
+quest_moqh2ew7_wpkwqt,profile_moqh2es4_4p0uao,balanced-build,Raise three attributes to 70+,weekly,100,open,2026-W19,,3,0,,system,,2026-05-04T00:39:32.839Z
+quest_moqh339s_7mxr40,profile_moqh2es4_4p0uao,main_moqh339s_pem70n,Finish portfolio rebuild,main,100,complete,2026-05-04,2026-05-11,1,1,Focus,user,2026-05-04T00:40:19.717Z,2026-05-04T00:40:04.432Z
+quest_moqh39wu_mbvm2n,profile_moqh2es4_4p0uao,side_moqh39wu_pzmcjd,Clean desk reset,side,40,complete,2026-05-04,2026-05-05,1,1,Discipline,user,2026-05-04T00:40:19.711Z,2026-05-04T00:40:13.038Z

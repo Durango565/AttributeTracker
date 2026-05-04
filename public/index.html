@@ -29,7 +29,7 @@
       </header>
 
       <main>
-        <section class="hero-grid">
+        <section id="section-overview" class="hero-grid mobile-section">
           <article class="player-card panel">
             <div class="plate">Season Demo</div>
             <div class="overall">
@@ -40,6 +40,7 @@
               <p class="eyebrow">Archetype</p>
               <h2 id="archetypeName">Loading</h2>
               <p id="archetypeDescription" class="muted">Calculating build identity.</p>
+              <p class="helper-text">Your archetype is calculated from your strongest attribute pattern and updates as your build changes.</p>
             </div>
             <div id="capList" class="cap-list"></div>
           </article>
@@ -59,6 +60,7 @@
               <span id="xpNext">-- XP to next level</span>
               <span id="xpFormula">XP formula</span>
             </div>
+            <p id="xpExplainer" class="helper-text">XP is earned through check-ins, attribute gains, skill practice, quests, and streak bonuses.</p>
             <div class="streak-grid">
               <div>
                 <strong id="currentStreak">0</strong>
@@ -76,15 +78,16 @@
           </article>
         </section>
 
-        <section class="content-grid">
+        <section id="section-attributes" class="content-grid mobile-section">
           <article class="panel wide">
             <div class="section-title">
               <div>
                 <p class="eyebrow">Core Attributes</p>
                 <h2>Rating Meters</h2>
               </div>
-              <span class="pill">1-99 scale</span>
+              <span class="pill">0-99 scale</span>
             </div>
+            <p class="helper-text">New profiles start at 0. Daily check-ins can raise each core attribute by a controlled amount: 0, +1, +2, or +3.</p>
             <div id="attributeGrid" class="attribute-grid"></div>
           </article>
 
@@ -97,14 +100,14 @@
             </div>
             <form id="skillForm" class="stack-form">
               <input id="skillName" type="text" placeholder="Add a skill" autocomplete="off">
-              <input id="skillRating" type="number" min="1" max="99" value="50">
+              <input id="skillRating" type="number" min="1" max="99" value="1">
               <button type="submit">Add Skill</button>
             </form>
             <div id="skillList" class="skill-list"></div>
           </article>
         </section>
 
-        <section class="content-grid">
+        <section id="section-checkin" class="content-grid single mobile-section">
           <article class="panel wide">
             <div class="section-title">
               <div>
@@ -113,12 +116,16 @@
               </div>
               <span id="duplicateHint" class="pill quiet">One check-in per day</span>
             </div>
+            <p class="helper-text">Choose small daily increases instead of setting ratings directly. XP is calculated automatically before saving.</p>
             <form id="checkinForm">
               <div class="form-grid">
                 <label>Date <input id="checkinDate" type="date"></label>
-                <label>XP gained <input id="xpGained" type="number" min="0" max="500" value="50"></label>
                 <label>Sleep hours <input id="sleepHours" type="number" min="0" max="16" step="0.25" value="7"></label>
                 <label>Learning minutes <input id="learningMinutes" type="number" min="0" max="600" value="30"></label>
+                <div class="xp-estimate">
+                  <span>Estimated XP</span>
+                  <strong id="estimatedXp">25</strong>
+                </div>
               </div>
               <div id="checkinAttributes" class="slider-grid"></div>
               <div id="checkinSkills" class="slider-grid"></div>
@@ -130,7 +137,47 @@
               <button class="primary" type="submit">Submit Check-In</button>
             </form>
           </article>
+        </section>
 
+        <section id="section-quests" class="content-grid single mobile-section">
+          <article class="panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Quests</p>
+                <h2>Main & Side Missions</h2>
+              </div>
+            </div>
+            <p class="helper-text">Main quests are bigger goals with larger rewards. Side quests are smaller missions for momentum between check-ins.</p>
+            <form id="questForm" class="quest-form">
+              <input id="questTitle" type="text" placeholder="Quest title" autocomplete="off">
+              <select id="questType">
+                <option value="side">Side quest</option>
+                <option value="main">Main quest</option>
+              </select>
+              <select id="questAttribute"></select>
+              <input id="questReward" type="number" min="0" max="1000" value="40" aria-label="XP reward">
+              <input id="questTarget" type="number" min="1" max="999" value="1" aria-label="Target count">
+              <input id="questDueDate" type="date" aria-label="Due date">
+              <button type="submit">Create Quest</button>
+            </form>
+            <div class="quest-columns">
+              <div>
+                <h3>Main Quests</h3>
+                <div id="mainQuestList" class="quest-list"></div>
+              </div>
+              <div>
+                <h3>Side Quests</h3>
+                <div id="sideQuestList" class="quest-list"></div>
+              </div>
+              <div>
+                <h3>Daily & Weekly Challenges</h3>
+                <div id="challengeList" class="quest-list"></div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section id="section-progress" class="content-grid mobile-section">
           <article class="panel">
             <div class="section-title">
               <div>
@@ -139,18 +186,6 @@
               </div>
             </div>
             <div id="badgeGrid" class="badge-grid"></div>
-          </article>
-        </section>
-
-        <section class="content-grid">
-          <article class="panel">
-            <div class="section-title">
-              <div>
-                <p class="eyebrow">Quests</p>
-                <h2>Challenges</h2>
-              </div>
-            </div>
-            <div id="questList" class="quest-list"></div>
           </article>
 
           <article class="panel wide">
@@ -166,6 +201,21 @@
           </article>
         </section>
       </main>
+    </div>
+    <nav class="mobile-nav" aria-label="Mobile section navigation">
+      <button type="button" data-target="section-overview">Overview</button>
+      <button type="button" data-target="section-attributes">Attributes</button>
+      <button type="button" data-target="section-checkin">Check-In</button>
+      <button type="button" data-target="section-quests">Quests</button>
+      <button type="button" data-target="section-progress">Progress</button>
+    </nav>
+    <div id="levelOverlay" class="level-overlay" aria-hidden="true">
+      <div class="level-card">
+        <p>LEVEL UP</p>
+        <h2 id="levelOverlayTitle">Level 1 to Level 2</h2>
+        <strong id="levelOverlayXp">+0 XP earned</strong>
+        <button id="closeLevelOverlay" type="button">Continue</button>
+      </div>
     </div>
     <div id="toast" role="status" aria-live="polite"></div>
     <script src="/app.js"></script>

@@ -26,20 +26,30 @@ const FILES = {
   },
   quests: {
     path: path.join(DATA_DIR, 'quests.csv'),
-    headers: ['id', 'profileId', 'key', 'title', 'type', 'xpReward', 'status', 'date', 'completedAt', 'createdAt']
+    headers: ['id', 'profileId', 'key', 'title', 'type', 'xpReward', 'status', 'date', 'dueDate', 'targetCount', 'progressCount', 'linkedAttribute', 'source', 'completedAt', 'createdAt']
   }
 };
 
 const CORE_ATTRIBUTES = ['Fitness', 'Focus', 'Discipline', 'Creativity', 'Social', 'Finance', 'Sleep', 'Learning'];
+const NEW_PROFILE_STARTING_RATING = 0;
+const DEFAULT_SKILL_STARTING_RATING = 1;
+const XP_RULES = {
+  dailyCheckin: 25,
+  attributePoint: 10,
+  skillPractice: 15,
+  sideQuest: 40,
+  mainQuest: 100,
+  streak7: 150
+};
 
 const QUEST_TEMPLATES = [
-  { key: 'daily-checkin', title: 'Complete a daily check-in', type: 'daily', xpReward: 60 },
-  { key: 'sleep-7', title: 'Log 7+ hours of sleep', type: 'daily', xpReward: 35 },
-  { key: 'learn-30', title: 'Study or learn for 30 minutes', type: 'daily', xpReward: 40 },
-  { key: 'fitness-activity', title: 'Complete a fitness activity', type: 'daily', xpReward: 40 },
-  { key: 'no-spend', title: 'No-spend day', type: 'daily', xpReward: 30 },
-  { key: 'three-checkins', title: 'Complete 3 check-ins this week', type: 'weekly', xpReward: 120 },
-  { key: 'balanced-build', title: 'Raise three attributes to 70+', type: 'weekly', xpReward: 150 }
+  { key: 'daily-checkin', title: 'Complete a daily check-in', type: 'daily', xpReward: 25, targetCount: 1, linkedAttribute: '' },
+  { key: 'sleep-7', title: 'Log 7+ hours of sleep', type: 'daily', xpReward: 40, targetCount: 1, linkedAttribute: 'Sleep' },
+  { key: 'learn-30', title: 'Study or learn for 30 minutes', type: 'daily', xpReward: 40, targetCount: 1, linkedAttribute: 'Learning' },
+  { key: 'fitness-activity', title: 'Complete a fitness activity', type: 'daily', xpReward: 40, targetCount: 1, linkedAttribute: 'Fitness' },
+  { key: 'no-spend', title: 'No-spend day', type: 'daily', xpReward: 40, targetCount: 1, linkedAttribute: 'Finance' },
+  { key: 'three-checkins', title: 'Complete 3 check-ins this week', type: 'weekly', xpReward: 100, targetCount: 3, linkedAttribute: 'Discipline' },
+  { key: 'balanced-build', title: 'Raise three attributes to 70+', type: 'weekly', xpReward: 100, targetCount: 3, linkedAttribute: '' }
 ];
 
 function todayISO() {
@@ -146,7 +156,15 @@ function numberValue(value, fallback = 0) {
 }
 
 function clampRating(value) {
-  return Math.max(1, Math.min(99, Math.round(numberValue(value, 50))));
+  return Math.max(0, Math.min(99, Math.round(numberValue(value, NEW_PROFILE_STARTING_RATING))));
+}
+
+function clampSkillRating(value) {
+  return Math.max(1, Math.min(99, Math.round(numberValue(value, DEFAULT_SKILL_STARTING_RATING))));
+}
+
+function clampAttributeDelta(value) {
+  return Math.max(-1, Math.min(3, Math.round(numberValue(value, 0))));
 }
 
 function parseUpdates(row) {
@@ -240,7 +258,8 @@ function ensureCoreAttributes(profileId) {
         id: makeId('attr'),
         profileId,
         name,
-        rating: 50,
+        // Fresh user-created profiles start from an untouched build. The demo profile is seeded separately.
+        rating: NEW_PROFILE_STARTING_RATING,
         cap: 99,
         isCore: 'true',
         updatedAt: new Date().toISOString()
@@ -270,6 +289,11 @@ function ensureQuestsForProfile(profileId) {
         xpReward: template.xpReward,
         status: 'open',
         date,
+        dueDate: template.type === 'daily' ? today : '',
+        targetCount: template.targetCount,
+        progressCount: 0,
+        linkedAttribute: template.linkedAttribute,
+        source: 'system',
         completedAt: '',
         createdAt: new Date().toISOString()
       });
@@ -297,6 +321,7 @@ function completeQuest(profileId, key, dateOrWeek) {
   const quest = quests.find((item) => item.profileId === profileId && item.key === key && item.date === dateOrWeek);
   if (!quest || quest.status === 'complete') return 0;
   quest.status = 'complete';
+  quest.progressCount = quest.targetCount || 1;
   quest.completedAt = new Date().toISOString();
   writeTable('quests', quests);
   return numberValue(quest.xpReward);
@@ -436,7 +461,12 @@ function currentSummary(profileId) {
   }));
   const normalizedQuests = data.quests.map((quest) => ({
     ...quest,
-    xpReward: numberValue(quest.xpReward)
+    xpReward: numberValue(quest.xpReward),
+    targetCount: numberValue(quest.targetCount, 1),
+    progressCount: numberValue(quest.progressCount, quest.status === 'complete' ? 1 : 0),
+    source: quest.source || (['main', 'side'].includes(quest.type) ? 'user' : 'system'),
+    linkedAttribute: quest.linkedAttribute || '',
+    dueDate: quest.dueDate || ''
   }));
   const streaks = computeStreaks(data.checkins);
   const xp = xpStats(data.checkins, data.quests);
@@ -451,7 +481,7 @@ function currentSummary(profileId) {
     archetype,
     badges: badgeSummary(normalizedAttributes, data.checkins, xp, streaks),
     trends: trendsFor(data.checkins),
-    formula: 'Level = floor(sqrt(total XP / 125)) + 1. Daily check-ins and completed quests both add XP.'
+    formula: `Level = floor(sqrt(total XP / 125)) + 1. Check-ins: +${XP_RULES.dailyCheckin} XP, +${XP_RULES.attributePoint} XP per attribute point gained, +${XP_RULES.skillPractice} XP per practiced skill, +${XP_RULES.streak7} XP on each 7-day streak. User quests default to +${XP_RULES.mainQuest} XP for main and +${XP_RULES.sideQuest} XP for side.`
   };
 }
 
@@ -525,7 +555,7 @@ app.post('/api/profiles/:profileId/skills', requireProfile, (req, res) => {
     id: makeId('skill'),
     profileId: req.profile.id,
     name,
-    rating: clampRating(req.body.rating || 50),
+    rating: clampSkillRating(req.body.rating || DEFAULT_SKILL_STARTING_RATING),
     cap: 99,
     createdAt: now,
     updatedAt: now
@@ -541,6 +571,7 @@ app.get('/api/profiles/:profileId/checkins', requireProfile, (req, res) => {
 
 app.post('/api/profiles/:profileId/checkins', requireProfile, (req, res) => {
   const date = req.body.date || todayISO();
+  const beforeSummary = currentSummary(req.profile.id);
   const checkins = readTable('checkins');
   const duplicate = checkins.find((checkin) => checkin.profileId === req.profile.id && checkin.date === date);
   if (duplicate) {
@@ -549,35 +580,68 @@ app.post('/api/profiles/:profileId/checkins', requireProfile, (req, res) => {
   }
 
   const updates = req.body.updates || {};
-  const attributeUpdates = updates.attributes || {};
-  const skillUpdates = updates.skills || {};
+  const attributeDeltas = updates.attributeDeltas || {};
+  const legacyAttributeUpdates = updates.attributes || {};
+  const practicedSkills = Array.isArray(updates.skillPractice) ? updates.skillPractice : [];
   const signals = updates.signals || {};
-  const xpGained = Math.max(0, Math.min(500, Math.round(numberValue(req.body.xpGained, 50))));
   const now = new Date().toISOString();
+  let appliedAttributePoints = 0;
+  const appliedAttributes = {};
+  const skillPractice = [];
 
   const attributes = readTable('attributes');
   attributes.forEach((attr) => {
-    if (attr.profileId === req.profile.id && Object.prototype.hasOwnProperty.call(attributeUpdates, attr.name)) {
-      attr.rating = clampRating(attributeUpdates[attr.name]);
+    if (attr.profileId !== req.profile.id) return;
+    let delta = 0;
+    if (Object.prototype.hasOwnProperty.call(attributeDeltas, attr.name)) {
+      delta = clampAttributeDelta(attributeDeltas[attr.name]);
+    } else if (Object.prototype.hasOwnProperty.call(legacyAttributeUpdates, attr.name)) {
+      // Compatibility for older clients: convert absolute rating updates to the allowed daily delta.
+      delta = clampAttributeDelta(numberValue(legacyAttributeUpdates[attr.name]) - numberValue(attr.rating));
+    }
+    if (delta !== 0) {
+      const previous = clampRating(attr.rating);
+      const next = clampRating(previous + delta);
+      const appliedDelta = next - previous;
+      attr.rating = next;
       attr.updatedAt = now;
+      appliedAttributes[attr.name] = { previous, delta: appliedDelta, next };
+      if (appliedDelta > 0) appliedAttributePoints += appliedDelta;
     }
   });
   writeTable('attributes', attributes);
 
   const skills = readTable('skills');
   skills.forEach((skill) => {
-    if (skill.profileId === req.profile.id && Object.prototype.hasOwnProperty.call(skillUpdates, skill.name)) {
-      skill.rating = clampRating(skillUpdates[skill.name]);
+    if (skill.profileId === req.profile.id && practicedSkills.includes(skill.name)) {
+      const previous = clampSkillRating(skill.rating);
+      const next = clampSkillRating(previous + 1);
+      skill.rating = next;
       skill.updatedAt = now;
+      skillPractice.push({ name: skill.name, previous, next });
     }
   });
   writeTable('skills', skills);
+
+  const projectedCheckins = [
+    ...checkins,
+    { profileId: req.profile.id, date, xpGained: 0 }
+  ].filter((checkin) => checkin.profileId === req.profile.id);
+  const projectedStreak = computeStreaks(projectedCheckins);
+  const streakBonus = projectedStreak.current > 0 && projectedStreak.current % 7 === 0 ? XP_RULES.streak7 : 0;
+  const xpBreakdown = {
+    dailyCheckin: XP_RULES.dailyCheckin,
+    attributeGain: appliedAttributePoints * XP_RULES.attributePoint,
+    skillPractice: skillPractice.length * XP_RULES.skillPractice,
+    streakBonus
+  };
+  const xpGained = Object.values(xpBreakdown).reduce((sum, value) => sum + value, 0);
 
   checkins.push({
     id: makeId('checkin'),
     profileId: req.profile.id,
     date,
-    updates: JSON.stringify({ attributes: attributeUpdates, skills: skillUpdates, signals }),
+    updates: JSON.stringify({ attributes: appliedAttributes, attributeDeltas, skillPractice, signals, xpBreakdown }),
     notes: String(req.body.notes || '').slice(0, 600),
     xpGained,
     createdAt: now
@@ -585,39 +649,104 @@ app.post('/api/profiles/:profileId/checkins', requireProfile, (req, res) => {
   writeTable('checkins', checkins);
 
   ensureQuestsForProfile(req.profile.id);
-  completeQuest(req.profile.id, 'daily-checkin', date);
-  if (numberValue(signals.sleepHours) >= 7) completeQuest(req.profile.id, 'sleep-7', date);
-  if (numberValue(signals.learningMinutes) >= 30) completeQuest(req.profile.id, 'learn-30', date);
-  if (signals.fitnessActivity) completeQuest(req.profile.id, 'fitness-activity', date);
-  if (signals.noSpend) completeQuest(req.profile.id, 'no-spend', date);
+  let autoQuestXp = 0;
+  autoQuestXp += completeQuest(req.profile.id, 'daily-checkin', date);
+  if (numberValue(signals.sleepHours) >= 7) autoQuestXp += completeQuest(req.profile.id, 'sleep-7', date);
+  if (numberValue(signals.learningMinutes) >= 30) autoQuestXp += completeQuest(req.profile.id, 'learn-30', date);
+  if (signals.fitnessActivity) autoQuestXp += completeQuest(req.profile.id, 'fitness-activity', date);
+  if (signals.noSpend) autoQuestXp += completeQuest(req.profile.id, 'no-spend', date);
 
   const profileCheckins = readTable('checkins').filter((checkin) => checkin.profileId === req.profile.id);
   const thisWeek = weekKey(new Date(`${date}T00:00:00Z`));
   const weekCheckins = profileCheckins.filter((checkin) => weekKey(new Date(`${checkin.date}T00:00:00Z`)) === thisWeek);
-  if (weekCheckins.length >= 3) completeQuest(req.profile.id, 'three-checkins', thisWeek);
+  if (weekCheckins.length >= 3) autoQuestXp += completeQuest(req.profile.id, 'three-checkins', thisWeek);
 
   const latestAttributes = readTable('attributes').filter((attr) => attr.profileId === req.profile.id);
   const highAttributes = latestAttributes.filter((attr) => numberValue(attr.rating) >= 70).length;
-  if (highAttributes >= 3) completeQuest(req.profile.id, 'balanced-build', thisWeek);
+  if (highAttributes >= 3) autoQuestXp += completeQuest(req.profile.id, 'balanced-build', thisWeek);
 
-  res.status(201).json(currentSummary(req.profile.id));
+  const summary = currentSummary(req.profile.id);
+  summary.actionResult = {
+    kind: 'checkin',
+    xpEarned: xpGained + autoQuestXp,
+    xpBreakdown: { ...xpBreakdown, autoQuestRewards: autoQuestXp },
+    oldLevel: beforeSummary.xp.level,
+    newLevel: summary.xp.level,
+    leveledUp: summary.xp.level > beforeSummary.xp.level,
+    appliedAttributes,
+    skillPractice
+  };
+  res.status(201).json(summary);
 });
 
 app.get('/api/profiles/:profileId/quests', requireProfile, (req, res) => {
   res.json(currentSummary(req.profile.id).quests);
 });
 
+app.post('/api/profiles/:profileId/quests', requireProfile, (req, res) => {
+  const title = String(req.body.title || '').trim();
+  const type = String(req.body.type || 'side').toLowerCase() === 'main' ? 'main' : 'side';
+  if (!title) {
+    res.status(400).json({ error: 'Quest title is required.' });
+    return;
+  }
+
+  const targetCount = Math.max(1, Math.min(999, Math.round(numberValue(req.body.targetCount, 1))));
+  const requestedReward = numberValue(req.body.xpReward, type === 'main' ? XP_RULES.mainQuest : XP_RULES.sideQuest);
+  const xpReward = Math.max(0, Math.min(1000, Math.round(requestedReward)));
+  const quests = readTable('quests');
+  const quest = {
+    id: makeId('quest'),
+    profileId: req.profile.id,
+    key: makeId(type),
+    title,
+    type,
+    xpReward,
+    status: 'active',
+    date: todayISO(),
+    dueDate: String(req.body.dueDate || ''),
+    targetCount,
+    progressCount: 0,
+    linkedAttribute: CORE_ATTRIBUTES.includes(req.body.linkedAttribute) ? req.body.linkedAttribute : '',
+    source: 'user',
+    completedAt: '',
+    createdAt: new Date().toISOString()
+  };
+  quests.push(quest);
+  writeTable('quests', quests);
+  res.status(201).json(quest);
+});
+
 app.post('/api/profiles/:profileId/quests/:questId/complete', requireProfile, (req, res) => {
+  const beforeSummary = currentSummary(req.profile.id);
   const quests = readTable('quests');
   const quest = quests.find((item) => item.id === req.params.questId && item.profileId === req.profile.id);
   if (!quest) {
     res.status(404).json({ error: 'Quest not found.' });
     return;
   }
+  if (quest.status === 'complete') {
+    res.json(currentSummary(req.profile.id));
+    return;
+  }
   quest.status = 'complete';
+  quest.progressCount = quest.targetCount || 1;
   quest.completedAt = new Date().toISOString();
   writeTable('quests', quests);
-  res.json(currentSummary(req.profile.id));
+  const summary = currentSummary(req.profile.id);
+  summary.actionResult = {
+    kind: 'quest',
+    xpEarned: numberValue(quest.xpReward),
+    oldLevel: beforeSummary.xp.level,
+    newLevel: summary.xp.level,
+    leveledUp: summary.xp.level > beforeSummary.xp.level,
+    quest: {
+      id: quest.id,
+      title: quest.title,
+      type: quest.type
+    }
+  };
+  res.json(summary);
 });
 
 app.use('/api', (req, res) => {
